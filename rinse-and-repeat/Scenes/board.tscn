@@ -1,0 +1,11 @@
+[gd_scene format=3 uid="uid://ead77jhcwicl"]
+
+[ext_resource type="Script" uid="uid://pyoe1efahx6w" path="res://Scripts/board.gd" id="1_tnbny"]
+[ext_resource type="PackedScene" uid="uid://d1a0dgxso6m6h" path="res://Scenes/tile_scene.tscn" id="2_2wvcj"]
+
+[node name="Board" type="Node2D" unique_id=1383785581]
+script = ExtResource("1_tnbny")
+board_height = 7
+board_length = 10
+tile_border_size = 30
+tile_scene = ExtResource("2_2wvcj")

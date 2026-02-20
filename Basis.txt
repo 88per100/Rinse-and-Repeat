@@ -1,0 +1,17 @@
+THEME:
+
+- Constant Progress
+
+GENRE:
+
+- Tactical RPG
+
+PROJECT:
+
+- "A Game in 2 weeks"
+
+DUE DATE:
+
+- 01/03/2026
+
+EXTRAS:
