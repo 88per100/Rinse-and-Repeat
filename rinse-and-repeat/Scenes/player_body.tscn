@@ -2,7 +2,7 @@
 
 [ext_resource type="Texture2D" uid="uid://ccarncl7q183m" path="res://icon.svg" id="1_v0iea"]
 
-[node name="Player" type="Node2D" unique_id=1878620735]
+[node name="PlayerBody" type="Node2D" unique_id=1878620735]
 
 [node name="Sprite2D" type="Sprite2D" parent="." unique_id=1822152574]
 texture = ExtResource("1_v0iea")

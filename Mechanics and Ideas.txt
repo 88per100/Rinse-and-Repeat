@@ -6,7 +6,6 @@ IDEAS:
 
 MECHANICS (THOUGHTS):
 
-- Decent sized grid (10x10?)
 - Some obstacles randomly placed each level and with enemies increasingly harder
 - After each kill, grant some combo or boost
 - After each level, the player can choose some reward
