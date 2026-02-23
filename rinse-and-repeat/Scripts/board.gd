@@ -56,12 +56,24 @@ func tile_generator(height: int, length: int, tile_size: int, positions: Array) 
 			add_child(tile)
 			tile.position = positions[i][j]
 			tile.scale *= scaling
+			tile.board_position = Vector2(i, j)
 	
 
 func player_start() -> void:
+	#This function puts the player's sprite on the board
 	player_body = player_body_scene.instantiate()
 	add_child(player_body)
+	#Selects a random starting position for the player on the left side of the board
 	var random_starting_position = randi_range(0, board_height - 1)
+	board_matrix[random_starting_position][0] = 1
 	print(random_starting_position)
+	print(board_matrix)
 	player_body.position = board_position_matrix[random_starting_position][0]
 	player_body.scale = Vector2(0.4, 0.4)
+	player_body.board_position = Vector2(random_starting_position, 0)
+	print(player_body.board_position)
+	
+	
+
+func check_player_position() -> void:
+	pass

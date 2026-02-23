@@ -1,10 +1,16 @@
 [gd_scene format=3 uid="uid://d1a0dgxso6m6h"]
 
+[ext_resource type="Script" uid="uid://gvakk0my27ft" path="res://Scripts/tile_scene.gd" id="1_dbnh4"]
+
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_hij6f"]
 
 [node name="Tile Scene" type="Node2D" unique_id=1154316800]
+script = ExtResource("1_dbnh4")
 
 [node name="Tile" type="Area2D" parent="." unique_id=307278064]
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="Tile" unique_id=2096638630]
 shape = SubResource("RectangleShape2D_hij6f")
+
+[connection signal="mouse_entered" from="Tile" to="." method="_on_tile_mouse_entered"]
+[connection signal="mouse_exited" from="Tile" to="." method="_on_tile_mouse_exited"]
