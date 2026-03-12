@@ -1,15 +1,17 @@
 IDEAS:
 
-- Simple game loop: A dude with a sword that can either attack close range or throw it.
-- Every kill grants a boost or combo of some sort.
+- Simple game loop: A dude with a sword that can either attack close range or throw it;
+- Every kill grants a boost or combo of some sort;
 - Beat the level, buy a boost of some sort, next level, repeat.
 
 MECHANICS (THOUGHTS):
 
-- Some obstacles randomly placed each level and with enemies increasingly harder
-- After each kill, grant some combo or boost
-- After each level, the player can choose some reward
+- Some obstacles randomly placed each level and with enemies increasingly harder;
+- After each kill, grant some combo or boost;
+- After each level, the player can choose some reward.
 
 MECHANICS IMPLEMENTED:
 
-- Simple Grid implemented with automatic creation, editable in height, length and tile size (to be refined later on)
+- Simple Grid with automatic creation, editable in height, length and tile size (to be refined later on);
+- Tile Detection and Communication with the board through signals (tiles are buttons);
+- Player Movement on the board and clear conditions for movement;
