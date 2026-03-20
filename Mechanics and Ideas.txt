@@ -15,3 +15,4 @@ MECHANICS IMPLEMENTED:
 - Simple Grid with automatic creation, editable in height, length and tile size (to be refined later on);
 - Tile Detection and Communication with the board through signals (tiles are buttons);
 - Player Movement on the board and clear conditions for movement;
+- Obstacle logic implemented and its limitations for movement;

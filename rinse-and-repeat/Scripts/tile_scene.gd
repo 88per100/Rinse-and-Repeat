@@ -4,10 +4,12 @@ extends Node2D
 var board_position: Vector2i
 
 #Colors for the buttons (temporary)
-var initial_color: Color = Color(0.113, 0.125, 0.129, 1.0)
-var highlight_color: Color = Color(0.234, 0.61, 0.0, 1.0)
+var initial_color: Color = Color(0.517, 0.351, 0.222, 1.0)
+var movement_highlight_color: Color = Color(0.234, 0.61, 0.0, 1.0)
 var player_highlight_color: Color = Color(0.0, 0.597, 1.0, 1.0)
+var object_highlight_color: Color = Color(0.0, 0.0, 0.0, 1.0)
 
+var object_here: bool = false
 var is_player_here: bool = false
 var movable_tile: bool = false
 

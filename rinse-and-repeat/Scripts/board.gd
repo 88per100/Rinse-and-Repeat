@@ -1,8 +1,12 @@
 extends Node2D
 
+@export_category("Board Settings")
+@export_group("Size and Tile Size")
 @export var board_height: int
 @export var board_length: int
 @export var tile_border_size: int
+@export_group("Interactables")
+@export var object_number: int 
 
 #This way, we can access the Tile Scene, instanciate and control it with the board
 const tile_scene = preload("res://Scenes/tile_scene.tscn")
@@ -12,7 +16,7 @@ const player_body_scene = preload("res://Scenes/player_body.tscn")
 var player_body: Node2D
 
 #Matrix with the center position of each tile
-var board_position_matrix: Array
+var board_position_matrix: Array[Array]
 
 #Dictionary to store the Tile reference so that we can access it from the board
 var tiles_reference: Dictionary
@@ -25,19 +29,20 @@ var player_to_move: bool = false
 
 #Array to store the possible tiles that the player can move to once he is ready to move
 var player_movement_possibilities_calculated: bool = false
-var possible_player_movements: Array
+var possible_player_movements: Array[Vector2i]
 
 func _ready() -> void:
 	#Creates the board as the game loads
 	board_position_generator(board_height, board_length, tile_border_size)
 	tile_generator(board_height, board_length, tile_border_size, board_position_matrix)
 	player_start()
+	object_placer(object_number, board_height, board_length)
 	
 
 func _process(_delta: float) -> void:
-	#A while loop to make sure it keeps being checked, but need to be careful with it
-	while !player_movement_possibilities_calculated:
-		player_available_tiles_maker(player_control.pace)
+	#To make sure it keeps being checked, since process is always running
+	if !player_movement_possibilities_calculated:
+		player_available_tiles_maker(player_control.pace, player_control.move_directions)
 	
 
 func board_position_generator(height: int, length: int, tile_size: int) -> void:
@@ -48,7 +53,7 @@ func board_position_generator(height: int, length: int, tile_size: int) -> void:
 	for i in range(height):
 		var position_array_creator: Array
 		for j in range(length):
-			position_array_creator.append(Vector2((x_start + j * tile_size),(y_start + i * tile_size)))
+			position_array_creator.append(Vector2i((x_start + j * tile_size),(y_start + i * tile_size)))
 		board_position_matrix.append(position_array_creator)
 		
 
@@ -75,7 +80,31 @@ func tile_generator(height: int, length: int, tile_size: int, positions: Array) 
 			#Stores a reference in a Dictionary to each Tile
 			tiles_reference[Vector2i(i, j)] = tile
 			
+		
 	
+
+func object_placer(number: int, height: int, length: int) -> void:
+	
+	var object_positions: Array[Vector2i]
+	while object_positions.size() < number:
+		var random_object_position: Vector2i = Vector2i(randi_range(0, height - 1), randi_range(0, length - 1))
+		if object_positions.rfind(random_object_position) == -1:
+			var occupied: bool = tiles_reference[random_object_position].object_here or tiles_reference[random_object_position].is_player_here
+			if !occupied:
+				object_positions.append(random_object_position)
+			else:
+				continue
+		else:
+			continue
+		
+	
+	for pos in object_positions:
+		tiles_reference[pos].object_here = true
+		tiles_reference[pos].highlight(tiles_reference[pos].object_highlight_color) 
+	
+	print(object_positions)
+	
+
 
 func player_start() -> void:
 	#This function puts the player's sprite on the board
@@ -86,7 +115,6 @@ func player_start() -> void:
 	var random_starting_position = randi_range(0, board_height - 1)
 	
 	#Gives the information about the player position
-	player_body.board_position = Vector2i(random_starting_position, 0)
 	player_position = Vector2i(random_starting_position, 0)
 	
 	#Since wecan access each tile's information, we let each of them store if the player is there or not
@@ -106,13 +134,13 @@ func _on_board_tile_pressed(_tile_position: Vector2i, player_presence: bool, mov
 		tiles_reference[player_position].highlight(tiles_reference[player_position].player_highlight_color)
 		tiles_reference[player_position].scale *= Vector2(1.05,1.05)
 		
-		#A for loop that works only on the tiles that the player can move to
-		for tile in possible_player_movements:
-			tiles_reference[tile].highlight(tiles_reference[tile].highlight_color)
-			tiles_reference[tile].scale *= Vector2(1.05,1.05)
+		
+		#This loop makes each tile hold the information that the player can move to it
+		for unoccupied_tile in possible_player_movements:
+			tiles_reference[unoccupied_tile].movable_tile = true
+			tiles_reference[unoccupied_tile].highlight(tiles_reference[unoccupied_tile].movement_highlight_color)
+			tiles_reference[unoccupied_tile].scale *= Vector2(1.05,1.05)
 			
-			#This makes every tile that the player can move to aware of that
-			tiles_reference[tile].movable_tile = true
 		
 		player_to_move = true
 		
@@ -159,28 +187,68 @@ func _on_board_tile_pressed(_tile_position: Vector2i, player_presence: bool, mov
 		print("Player isn't here!")
 	
 
-func player_available_tiles_maker(range_value: int) -> void:
-	#Calculates, in 4 directions, the possible tiles the player can move to
-	for reach in range(range_value + 1):
-		#A value of zero is not useful for the range, so we skip it
-		if reach == 0:
-			continue
-		
-		var positive_reach: int = 0 - reach
-		var negative_reach: int = 0 + reach
-		
-		var options: Array
-		
-		options.append(Vector2i(player_position + Vector2i(0, positive_reach)))
-		options.append(Vector2i(player_position + Vector2i(0, negative_reach)))
-		options.append(Vector2i(player_position + Vector2i(positive_reach, 0)))
-		options.append(Vector2i(player_position + Vector2i(negative_reach, 0)))
-		#Verifies if it is within the board and adds it the possibilities array
-		for i in range(0, options.size()):
-			if (options[i].x < 0) or (options[i].y < 0) or (options[i].x >= board_height) or (options[i].y >= board_length):
-				pass
-			else:
-				possible_player_movements.append(options[i])
+func player_available_tiles_maker(range_value: int, direction_array: Array[String]) -> void:
+	#Calculates, in all available directions, the possible tiles the player can move to
+	for direction in direction_array:
+		#We go through each direction in the possible directions the player can go
+		#Each direction is stored in an Array for easier future changes of how many directioins the player can move
+		match direction:
+				"UP":
+					for reach in range(range_value + 1):
+						if reach == 0:
+							continue
+						var possible_position: Vector2i = player_position + Vector2i(-reach, 0)
+						if possible_position.x < 0:
+							break
+						var condition: bool = !tiles_reference[possible_position].object_here
+						if condition:
+							possible_player_movements.append(possible_position)
+						else:
+							break
+						
+					
+				"DOWN":
+					for reach in range(range_value + 1):
+						if reach == 0:
+							continue
+						var possible_position: Vector2i = player_position + Vector2i(reach, 0)
+						if possible_position.x >= board_height:
+							break
+						var condition: bool = !tiles_reference[possible_position].object_here
+						if condition:
+							possible_player_movements.append(possible_position)
+						else:
+							break
+						
+					
+				"LEFT":
+					for reach in range(range_value + 1):
+						if reach == 0:
+							continue
+						var possible_position: Vector2i = player_position + Vector2i(0, -reach)
+						if possible_position.y < 0:
+							break
+						var condition: bool = !tiles_reference[possible_position].object_here
+						if condition:
+							possible_player_movements.append(possible_position)
+						else:
+							break
+						
+					
+				"RIGHT":
+					for reach in range(range_value + 1):
+						if reach == 0:
+							continue
+						var possible_position: Vector2i = player_position + Vector2i(0, reach)
+						if possible_position.y >= board_length:
+							break
+						var condition: bool = !tiles_reference[possible_position].object_here
+						if condition:
+							possible_player_movements.append(possible_position)
+						else:
+							break
+						
+					
 	
 	#After calculating the Array, it stops until it has to change
 	player_movement_possibilities_calculated = true
