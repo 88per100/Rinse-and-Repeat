@@ -6,5 +6,11 @@ Week #1 and Week #2: (01/03/2026 - 14/03/2026)
 
 Week #3: (15/03/2026 - 21/03/2026)
 
- - Add object logic and the movement around it.
+ - Add object logic and the movement around it;
  - Releasing the DevLog #1
+
+Week #4: (22/03/2026 - 28/03/2026)
+
+ - Give the player the ability to make other actions besides movement;
+ - Make enemy logic and add simple turn logic;
+ - Start making some art and sound effects to add to the game.
