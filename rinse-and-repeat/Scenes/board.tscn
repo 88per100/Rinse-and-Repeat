@@ -5,6 +5,6 @@
 [node name="Board" type="Node2D" unique_id=1383785581]
 script = ExtResource("1_tnbny")
 board_height = 5
-board_length = 5
+board_length = 9
 tile_border_size = 70
-object_number = 3
+object_number = 10

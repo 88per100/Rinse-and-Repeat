@@ -1,0 +1,14 @@
+[gd_scene format=3 uid="uid://d1wsxknldhuaj"]
+
+[ext_resource type="Script" uid="uid://c0oqj8tap3i1i" path="res://Scripts/action_buttons.gd" id="1_d2wr5"]
+
+[node name="ActionButtons" type="Node2D" unique_id=968278729]
+script = ExtResource("1_d2wr5")
+
+[node name="Button" type="Button" parent="." unique_id=894726371]
+offset_left = -10.0
+offset_top = -4.0
+offset_right = 10.0
+offset_bottom = 4.0
+
+[connection signal="pressed" from="Button" to="." method="_on_button_pressed"]
