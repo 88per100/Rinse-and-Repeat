@@ -1,8 +1,12 @@
 extends Node2D
 class_name Enemy
 
+@export_category("Enemy Properties")
+@export_subgroup("Enemy Stats")
 @export var max_health: int = 100
 @export var pace: int = 1
+@export var agility: int = 3
+@export_subgroup("Enemy Actions")
 @export var enemy_sprite: Sprite2D
 @export var actions: Array[String] = ["ATTACK", "HEAL"]
 @export var move_directions: Array[String] = ["UP", "DOWN", "RIGHT", "LEFT"]

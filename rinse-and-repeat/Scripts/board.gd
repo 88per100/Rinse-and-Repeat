@@ -250,13 +250,6 @@ func _on_board_tile_pressed(_tile_position: Vector2i, player_presence: bool, mov
 		
 		
 	
-	elif player_presence and player_to_move:
-		
-		stop_player_movement(player_position, possible_player_movements)
-		
-		create_action_buttons(PlayerControl.actions)
-		
-	
 	#This part of the function runs if the player is selected and if he can move to the tile that was pressed
 	elif player_to_move and movable_tile:
 		
@@ -343,6 +336,8 @@ func stop_player_movement(current_position: Vector2i, possible_tiles: Array[Vect
 
 func player_available_tiles_maker(range_value: int, direction_array: Array[String]) -> void:
 	#Calculates, in all available directions, the possible tiles the player can move to
+	
+	possible_player_movements.append(player_position)
 	
 	for direction in direction_array:
 		#We go through each direction in the possible directions the player can go

@@ -2,6 +2,7 @@ extends Node
 
 var max_health: int = 10
 var pace: int = 2
+var agility: int = 5
 var move_directions: Array[String] = ["UP", "DOWN", "LEFT", "RIGHT"]
 var actions: Array[String] = ["ATTACK", "HEAL"]
 
