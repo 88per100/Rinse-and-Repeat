@@ -1,0 +1,24 @@
+[gd_scene format=3 uid="uid://cb7uicqyb0161"]
+
+[ext_resource type="Script" uid="uid://gj6m1wr3xuln" path="res://Scripts/turn_scene.gd" id="1_n6a7p"]
+
+[sub_resource type="LabelSettings" id="LabelSettings_n6a7p"]
+font_size = 14
+outline_size = 3
+outline_color = Color(0.556953, 0.556953, 0.556953, 1)
+
+[node name="Turn Scene" type="Node2D" unique_id=1263529885]
+script = ExtResource("1_n6a7p")
+
+[node name="Panel" type="Panel" parent="." unique_id=471977702]
+offset_right = 59.0
+offset_bottom = 25.0
+
+[node name="Turn Label" type="Label" parent="." unique_id=1161020698]
+offset_left = 2.0
+offset_top = 1.0
+offset_right = 57.0
+offset_bottom = 24.0
+label_settings = SubResource("LabelSettings_n6a7p")
+horizontal_alignment = 1
+vertical_alignment = 1

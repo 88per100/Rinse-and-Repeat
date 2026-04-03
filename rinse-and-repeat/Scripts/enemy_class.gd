@@ -80,5 +80,6 @@ func enemy_available_tiles_maker(board_height: int, board_length: int, board_til
 							break
 	
 
-func  enemy_action() -> void:
-	print("Enemy made an action!")
+func  enemy_action(enemy_index: int) -> void:
+	var action: String = actions[randi_range(0, actions.size() - 1)]
+	print("Enemy #{0} action: {1}!".format([enemy_index + 1, action]))

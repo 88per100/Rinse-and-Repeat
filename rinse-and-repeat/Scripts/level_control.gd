@@ -7,7 +7,7 @@ var enemy_number: int
 
 func enemy_number_calculator(level: int) -> void:
 	if current_level:
-		enemy_number = level
+		enemy_number = 2 * level
 	else:
 		enemy_number = 0
 

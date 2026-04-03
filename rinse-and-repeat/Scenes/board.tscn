@@ -4,7 +4,12 @@
 
 [node name="Board" type="Node2D" unique_id=1383785581]
 script = ExtResource("1_tnbny")
-board_height = 5
-board_length = 9
-tile_border_size = 70
-object_number = 10
+board_size_tester = 2
+board_sizes = {
+0: [4, 6, 76],
+1: [6, 9, 54],
+2: [8, 12, 42]
+}
+object_number_array = Array[int]([3, 6, 12])
+
+[connection signal="action_over" from="." to="." method="_on_action_over"]

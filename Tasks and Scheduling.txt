@@ -1,8 +1,21 @@
+Week #6: (05/04/2026 - 11/04/2026)
+
+ - Adding actual interactions between Enemies and Player;
+ - Change the object placer function to make it better;
+ - Adding actual actions to both of them;
+ - Start working on a Start Menu;
+ - Keep making art and sound effects (and adding it).
+
+-----//-----
+
 Week #5: (29/03/2026 - 04/04/2026)
 
- - Do some initial art and sound effects;
- - Optimize the turn logic and make it proper;
+ - Changed paths to UID 
+ - Implemented Turn Logic with Turn Order
+ - Added some movement tweens                                                    
  - Add some 'level' changes and center the board.
+
+ - Do some initial art and sound effects;
 
 -----//-----
 

@@ -18,7 +18,6 @@ config/icon="res://icon.svg"
 
 PlayerControl="*uid://b1fh0en18t2t8"
 LevelControl="*uid://dre2wapl6pu3w"
-TurnControl="*uid://gj6m1wr3xuln"
 
 [display]
 
