@@ -1,0 +1,27 @@
+[gd_scene format=3 uid="uid://c7aa8xuqmjbrc"]
+
+[ext_resource type="Script" uid="uid://chey744nby8lu" path="res://Scripts/Node Scripts/turn_control.gd" id="1_txtba"]
+
+[sub_resource type="LabelSettings" id="LabelSettings_txtba"]
+font_size = 18
+outline_size = 3
+outline_color = Color(0.8687863, 0, 0.08970068, 1)
+
+[node name="TurnControl" type="Node2D" unique_id=2112414101]
+script = ExtResource("1_txtba")
+
+[node name="TurnPanel" type="Panel" parent="." unique_id=1064915120]
+offset_left = 6.0
+offset_top = 5.0
+offset_right = 85.0
+offset_bottom = 39.0
+
+[node name="TurnLabel" type="Label" parent="TurnPanel" unique_id=1749065182]
+layout_mode = 0
+offset_top = 4.0
+offset_right = 79.0
+offset_bottom = 30.0
+text = "*turn*"
+label_settings = SubResource("LabelSettings_txtba")
+horizontal_alignment = 1
+vertical_alignment = 1

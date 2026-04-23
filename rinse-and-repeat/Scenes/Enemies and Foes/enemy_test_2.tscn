@@ -1,0 +1,44 @@
+[gd_scene format=3 uid="uid://bl8svrbyycwbd"]
+
+[ext_resource type="Script" uid="uid://bju1hwqn1d4aw" path="res://Scripts/Node Scripts/character_class.gd" id="1_ktnua"]
+[ext_resource type="Texture2D" uid="uid://ccarncl7q183m" path="res://icon.svg" id="2_rwui8"]
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_undhq"]
+atlas = ExtResource("2_rwui8")
+region = Rect2(0, 0, 128, 128)
+
+[sub_resource type="SpriteFrames" id="SpriteFrames_u7wbt"]
+animations = [{
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_undhq")
+}],
+"loop": true,
+"name": &"default",
+"speed": 5.0
+}]
+
+[node name="EnemyTest2" type="Node2D" unique_id=1968003185 node_paths=PackedStringArray("character_sprite", "health_bar")]
+script = ExtResource("1_ktnua")
+character_name = "Enemy2"
+character_sprite = NodePath("AnimatedSprite2D")
+health_bar = NodePath("ProgressBar")
+max_health = 10
+strength = 1
+resistance = 1
+sharpness = 1
+agility = 1
+move_range = 1
+movement_directions = 8
+metadata/_custom_type_script = "uid://bju1hwqn1d4aw"
+
+[node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="." unique_id=463814411]
+modulate = Color(0.6343596, 0.14643982, 0.7723977, 1)
+sprite_frames = SubResource("SpriteFrames_u7wbt")
+
+[node name="ProgressBar" type="ProgressBar" parent="." unique_id=1678125330]
+offset_left = -57.0
+offset_top = 69.0
+offset_right = 57.0
+offset_bottom = 85.0
+show_percentage = false

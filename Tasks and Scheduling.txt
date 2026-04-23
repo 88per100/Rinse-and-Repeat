@@ -1,21 +1,23 @@
+Week #7: (12/04/2026 - 18/04/2026)
+
+ - Between moving and everything else I need to do, hopefully I'll catch the code up to date (as in, what I had already will be redone and the newer features also added).
+
+-----//-----
+
 Week #6: (05/04/2026 - 11/04/2026)
 
- - Adding actual interactions between Enemies and Player;
- - Change the object placer function to make it better;
- - Adding actual actions to both of them;
- - Start working on a Start Menu;
- - Keep making art and sound effects (and adding it).
+ - While working on the planned changes, I realized that the code needed to be reworked, as it was becoming too messy and it was impossible to move forward for me.
+ - So that's what I started this week, probably no video 2 weeks in a row thanks to that and me procrastinating making that decision.
 
 -----//-----
 
 Week #5: (29/03/2026 - 04/04/2026)
 
- - Changed paths to UID 
- - Implemented Turn Logic with Turn Order
- - Added some movement tweens                                                    
- - Add some 'level' changes and center the board.
-
- - Do some initial art and sound effects;
+ - Changed paths to UID;
+ - Implemented Turn Logic with Turn Order;
+ - Added some movement tweens;                                        
+ - Added some 'level' changes and center the board;
+ - Created a Player Sprite.
 
 -----//-----
 

@@ -1,0 +1,18 @@
+[gd_scene format=3 uid="uid://cpu4rhtoa2tf0"]
+
+[ext_resource type="Script" uid="uid://bju1hwqn1d4aw" path="res://Scripts/Node Scripts/character_class.gd" id="1_dcu3h"]
+
+[sub_resource type="SpriteFrames" id="SpriteFrames_dcu3h"]
+
+[node name="CharacterClass" type="Node2D" unique_id=1294301283]
+script = ExtResource("1_dcu3h")
+metadata/_custom_type_script = "uid://bju1hwqn1d4aw"
+
+[node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="." unique_id=1638313432]
+sprite_frames = SubResource("SpriteFrames_dcu3h")
+
+[node name="ProgressBar" type="ProgressBar" parent="." unique_id=1396523805]
+offset_right = 4.0
+offset_bottom = 27.0
+
+[node name="Sprite2D" type="Sprite2D" parent="." unique_id=1511419831]

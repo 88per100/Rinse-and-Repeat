@@ -1,0 +1,28 @@
+Strength - S -> Range(0, 20)
+Resistance - R -> Range(0, 20)
+Skill BP - BP -> Range(0, 100)
+Sharpness - Sh -> Range(0, 20)
+Health - HP -> Min = 20
+Damage - D 
+
+Formula = 1/Resistência * Impulso * Força Aplicada
+
+D = 1/4(R+1) * ((S+1)/2)^2 * (BP) + 2S - R
+
+Test Examples:
+
+#1 - S: 2, R: 1, BP: 10, Health: 30    -> 6
+#2 - S: 3, R: 4, BP: 20, Health: 50    -> 6
+#3 - S: 6, R: 10, BP: 40, Health: 80   -> 14
+#4 - S: 15, R: 12, BP: 70, Health: 100 -> 105
+#5 - S: 18, R: 17, BP: 90, Health: 150 -> 132
+
+D = 1/5(R+1) * ((S+1)/2)^2 * (BP) + 3S - R
+
+Test Examples:
+
+#1 - S: 2, R: 1, BP: 10, Health: 30    -> 8
+#2 - S: 3, R: 4, BP: 20, Health: 50    -> 9
+#3 - S: 6, R: 10, BP: 40, Health: 80   -> 17
+#4 - S: 15, R: 12, BP: 70, Health: 100 -> 102
+#5 - S: 18, R: 17, BP: 90, Health: 150 -> 128

@@ -1,0 +1,15 @@
+[gd_scene format=3 uid="uid://dyv08ioydjut1"]
+
+[ext_resource type="Script" uid="uid://vdteit7lkeqh" path="res://Scripts/Node Scripts/board_script.gd" id="1_ok5vv"]
+
+[node name="BoardScene" type="Node2D" unique_id=1418080976]
+script = ExtResource("1_ok5vv")
+height_min = 4
+height_max = 10
+board_screen_ratio = 0.9
+
+[connection signal="new_turn" from="." to="." method="_on_new_turn"]
+[connection signal="npc_action_over" from="." to="." method="_on_npc_action_over"]
+[connection signal="npc_movement_over" from="." to="." method="_on_npc_movement_over"]
+[connection signal="player_action_over" from="." to="." method="_on_player_action_over"]
+[connection signal="player_movement_over" from="." to="." method="_on_player_movement_over"]

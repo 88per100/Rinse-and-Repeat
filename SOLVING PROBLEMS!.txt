@@ -1,0 +1,58 @@
+SOLVING PROBLEMS!
+
+0) Definir Game Loop e o que quero no jogo - Done
+1) Arranjar maneira de calcular stats através de base stats - Just HP
+2) Arranjar level system e maneira de o tornar modular - Not Doing
+3) Arranjar maneira de controlar e armazenar info sobre jogador
+4) Fazer distinção de jogador e inimigos
+5) Perceber como fazer habilidades
+
+--- Este passo termina aqui ---
+
+Attempt #1 ao Game Loop:
+
+Definir game loop inicial:
+ - Jogador escolhe Mentality (Hunter, Runner, ...)
+ - Jogador escolhe espada
+ - Jogador escolhe Path da espada (Ganham-se novas habilidades, bem como mais estatísticas)
+ - Jogador entra em batalha
+   - Jogador recebe Tasks para cumprir durante a batalha dependo da Mentality
+   - Quanto mais rápido o jogador eliminar um inimigo, melhor a recompensa
+ - Jogador armazena XP (e uma currency qualquer para desbloquear outras coisas) durante o "dia" e gasta-o à noite em upgrades
+   - Upgrades:
+     - Progressão no path da espada
+     - Aumentar uma estatística
+ - Com a currency extra, o jogador compra novos paths, espadas e mentalities
+
+
+Base HP -> BHP
+Base Strength -> BSt
+Base Resistance -> BR
+Base Sharpness -> BSh
+Base Agility -> BA
+Level -> L
+
+HP Calc:
+
+Formula:
+
+Max HP = 
+
+Test Examples:
+
+1) BHP = 1, L = 1 ->
+2) BHP = 3, L = 5 ->
+3) BHP = 9, L = 7 ->
+
+
+
+
+
+
+
+
+
+
+
+
+

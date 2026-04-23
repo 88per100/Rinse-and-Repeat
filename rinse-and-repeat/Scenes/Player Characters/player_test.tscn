@@ -1,0 +1,43 @@
+[gd_scene format=3 uid="uid://bbqrjumu8yvow"]
+
+[ext_resource type="Script" uid="uid://bju1hwqn1d4aw" path="res://Scripts/Node Scripts/character_class.gd" id="1_sxmh3"]
+[ext_resource type="Texture2D" uid="uid://d1rtfc117t82u" path="res://Assets/Player.png" id="2_sxmh3"]
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_ulu4o"]
+atlas = ExtResource("2_sxmh3")
+region = Rect2(0, 0, 96, 96)
+
+[sub_resource type="SpriteFrames" id="SpriteFrames_6myoh"]
+animations = [{
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_ulu4o")
+}],
+"loop": false,
+"name": &"default",
+"speed": 5.0
+}]
+
+[node name="PlayerTest" type="Node2D" unique_id=1349534859 node_paths=PackedStringArray("character_sprite", "health_bar")]
+script = ExtResource("1_sxmh3")
+character_name = "Tester"
+character_sprite = NodePath("PlayerTestSprite")
+player_character = true
+health_bar = NodePath("PlayerTestHealthBar")
+move_range = 3
+movement_directions = 8
+metadata/_custom_type_script = "uid://bju1hwqn1d4aw"
+
+[node name="PlayerTestSprite" type="AnimatedSprite2D" parent="." unique_id=1928690237]
+position = Vector2(8, -15)
+scale = Vector2(2.5455644, 2.5455644)
+sprite_frames = SubResource("SpriteFrames_6myoh")
+autoplay = "default"
+
+[node name="PlayerTestHealthBar" type="ProgressBar" parent="." unique_id=1352876674]
+offset_left = -93.0
+offset_top = -62.0
+offset_right = -71.0
+offset_bottom = 60.0
+fill_mode = 3
+show_percentage = false

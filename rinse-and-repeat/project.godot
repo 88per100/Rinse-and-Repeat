@@ -14,11 +14,6 @@ config/name="Rinse and Repeat"
 config/features=PackedStringArray("4.6", "Forward Plus")
 config/icon="res://icon.svg"
 
-[autoload]
-
-PlayerControl="*uid://b1fh0en18t2t8"
-LevelControl="*uid://dre2wapl6pu3w"
-
 [display]
 
 window/size/viewport_width=1280
