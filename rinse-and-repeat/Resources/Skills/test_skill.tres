@@ -2,19 +2,23 @@
 
 [ext_resource type="Script" uid="uid://bv8gjji7v61xy" path="res://Scripts/Resource Scripts/skill_resource.gd" id="1_wee6o"]
 [ext_resource type="Script" uid="uid://bp2646gcuy0oo" path="res://Scripts/Resource Scripts/skill_target.gd" id="2_i3l80"]
-[ext_resource type="Script" uid="uid://df5dc8jpeanht" path="res://Scripts/Resource Scripts/skill_type.gd" id="3_cyl2g"]
+[ext_resource type="Script" uid="uid://d1x316fxlvoo4" path="res://Resources/Skill Types/attack.gd" id="3_ek0hg"]
 
 [sub_resource type="Resource" id="Resource_vm34b"]
 script = ExtResource("2_i3l80")
+target = 1
+skill_range = 1
 metadata/_custom_type_script = "uid://bp2646gcuy0oo"
 
-[sub_resource type="Resource" id="Resource_rdvku"]
-script = ExtResource("3_cyl2g")
-skill_function = 1
-metadata/_custom_type_script = "uid://df5dc8jpeanht"
+[sub_resource type="Resource" id="Resource_2qj7x"]
+script = ExtResource("3_ek0hg")
+base_damage = 5
+metadata/_custom_type_script = "uid://d1x316fxlvoo4"
 
 [resource]
 script = ExtResource("1_wee6o")
-type = SubResource("Resource_rdvku")
+skill_name = "Test Skill"
+type = SubResource("Resource_2qj7x")
 target = SubResource("Resource_vm34b")
+skill_description = "It does damage!"
 metadata/_custom_type_script = "uid://bv8gjji7v61xy"

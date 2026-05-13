@@ -24,6 +24,7 @@ character_name = "Tester"
 character_sprite = NodePath("PlayerTestSprite")
 player_character = true
 health_bar = NodePath("PlayerTestHealthBar")
+base_agility = 2
 move_range = 3
 movement_directions = 8
 metadata/_custom_type_script = "uid://bju1hwqn1d4aw"

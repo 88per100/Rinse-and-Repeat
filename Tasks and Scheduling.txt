@@ -1,3 +1,18 @@
+Week #9: (10/05/2026 - 16/05/2026)
+
+ - Finish implementing Skills;
+ - Get much more Art done (temporary at least);
+ - Start working on Level logic, if everything else is working.
+
+-----//-----
+
+Week #8 (of progress): (03/05/2026 - 09/05/2026)
+
+ - All the code that was previously on the game has been officially redone;
+ - Skills are being implemented, not fully yet.
+
+-----//-----
+
 Week #7: (12/04/2026 - 18/04/2026)
 
  - Between moving and everything else I need to do, hopefully I'll catch the code up to date (as in, what I had already will be redone and the newer features also added).

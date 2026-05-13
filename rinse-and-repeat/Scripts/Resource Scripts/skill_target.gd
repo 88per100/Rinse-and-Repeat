@@ -1,5 +1,7 @@
 extends Resource
 class_name SkillTarget
+#This is a Resource for the Skill that defines the Target of the Skill
+#Still not tested, but done for now
 
 @export var target: target_type
 @export var skill_range: int
@@ -8,6 +10,12 @@ enum target_type {SELF, SINGLE_TARGET, AREA, SLICE_AREA}
 
 func get_targets(user_position: Vector2i, height: int, length: int) -> Dictionary[int, Array]:
 	var target_dictionary: Dictionary[int, Array]
+	
+	var actual_range: int
+	if skill_range == 0:
+		actual_range = 1
+	else:
+		actual_range = skill_range
 	
 	match target:
 		target_type.SELF:
@@ -23,7 +31,7 @@ func get_targets(user_position: Vector2i, height: int, length: int) -> Dictionar
 						skill_directions.append(Vector2i(i, j))
 			
 			var k = 0
-			for n in range(1, skill_range + 1):
+			for n in range(1, actual_range + 1):
 				for m in range(skill_directions.size()):
 					var possible_target: Vector2i = user_position + n * skill_directions[m]
 					if position_in_bounds(possible_target, height, length):
@@ -42,7 +50,7 @@ func get_targets(user_position: Vector2i, height: int, length: int) -> Dictionar
 					else:
 						skill_directions.append(Vector2i(i, j))
 			
-			for n in range(1, skill_range + 1):
+			for n in range(1, actual_range + 1):
 				for m in range(skill_directions.size()):
 					var possible_target: Vector2i = user_position + n * skill_directions[m]
 					if position_in_bounds(possible_target, height, length):
@@ -57,7 +65,7 @@ func get_targets(user_position: Vector2i, height: int, length: int) -> Dictionar
 			var s = 0
 			
 			for direction in slice_directions:
-				for r in range(1, skill_range + 1):
+				for r in range(1, actual_range + 1):
 					var mod_1: Vector2i
 					var mod_2: Vector2i
 					
