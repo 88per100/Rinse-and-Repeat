@@ -8,7 +8,7 @@ class_name SkillTarget
 
 enum target_type {SELF, SINGLE_TARGET, AREA, SLICE_AREA}
 
-func get_targets(user_position: Vector2i, height: int, length: int) -> Dictionary[int, Array]:
+func calculate_targets(user_position: Vector2i, height: int, length: int) -> Dictionary[int, Array]:
 	var target_dictionary: Dictionary[int, Array]
 	
 	var actual_range: int
@@ -19,7 +19,7 @@ func get_targets(user_position: Vector2i, height: int, length: int) -> Dictionar
 	
 	match target:
 		target_type.SELF:
-			target_dictionary[0].append(user_position)
+				target_dictionary[0] = [user_position]
 			
 		target_type.SINGLE_TARGET:
 			var skill_directions: Array[Vector2i]
@@ -35,7 +35,7 @@ func get_targets(user_position: Vector2i, height: int, length: int) -> Dictionar
 				for m in range(skill_directions.size()):
 					var possible_target: Vector2i = user_position + n * skill_directions[m]
 					if position_in_bounds(possible_target, height, length):
-						target_dictionary[k].append(possible_target)
+						target_dictionary[k] = [possible_target]
 						k += 1
 					else:
 						continue
@@ -49,6 +49,8 @@ func get_targets(user_position: Vector2i, height: int, length: int) -> Dictionar
 						continue
 					else:
 						skill_directions.append(Vector2i(i, j))
+			
+			target_dictionary[0] = []
 			
 			for n in range(1, actual_range + 1):
 				for m in range(skill_directions.size()):
@@ -65,6 +67,7 @@ func get_targets(user_position: Vector2i, height: int, length: int) -> Dictionar
 			var s = 0
 			
 			for direction in slice_directions:
+				target_dictionary[s] = []
 				for r in range(1, actual_range + 1):
 					var mod_1: Vector2i
 					var mod_2: Vector2i
@@ -92,8 +95,8 @@ func get_targets(user_position: Vector2i, height: int, length: int) -> Dictionar
 				s += 1
 		
 	
-	
 	return target_dictionary
+	
 
 func position_in_bounds(pos: Vector2i, h: int, l: int) -> bool:
 	return (pos.x >= 0 and pos.y >= 0 and pos.x < h and pos.y < l)

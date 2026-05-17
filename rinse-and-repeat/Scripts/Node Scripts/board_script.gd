@@ -3,7 +3,9 @@ class_name Board
 
 #Tile Scene and Turn Control Scene are preloaded to be instantiated on the board's scene
 @onready var tile_scene: PackedScene = preload("uid://biqedlsv4qd0v")
-@onready var turn_control_scene: PackedScene = preload("uid://c7aa8xuqmjbrc")
+@onready var turn_control: TurnControl = $CanvasLayer/TurnControl
+
+@onready var camera: Camera2D = $Camera2D
 
 #These variables are currently decided on an export to be easier to set and test
 #They will be most likely be set in a different way
@@ -26,13 +28,11 @@ var character_list: Array[CharacterClass]
 var height: int
 var length: int
 var tile_size: float
-
-#Variable that stores the TurnControl node that gets instantiated on to the board
-var turn_control: TurnControl
+var center_position: Vector2
 
 #Range of time for the transition between turns and actions
 #Probably will be changed or removed later
-var transition_range: Array[float] = [0.3, 0.4]
+var transition_range: Array[float] = [0.5, 1.0]
 
 #Self explanatory, but these store everything related to the positions on the board
 #Logical Board: Stores each Logical Position of the board
@@ -53,10 +53,13 @@ var player_character: CharacterClass
 #npc_action_over(): Lets the board know when a NPC's action is over
 #new_turn(): Lets the board know when a new turn is set to begin
 var player_to_move: bool = false
+var player_to_attack: bool = false
 signal player_movement_over()
 signal player_action_over()
+signal target_selected()
 signal npc_movement_over()
 signal npc_action_over()
+signal skill_over()
 signal new_turn()
 
 # Called when the node enters the scene tree for the first time.
@@ -64,8 +67,10 @@ func _ready() -> void:
 	set_board_dimensions()
 	logical_board = logical_board_creator()
 	positions_dictionary = positions_dictionary_creator()
-	turn_control_initializer()
+	turn_control.update_turn_ui()
 	board_tile_placer()
+	
+	camera.offset = center_position
 	
 	character_tester_placer()
 	#After getting characters
@@ -117,7 +122,7 @@ func positions_dictionary_creator() -> Dictionary[Vector2i, Vector2]:
 	var result: Dictionary[Vector2i, Vector2]
 	
 	#First, it calculates the center position of the screen
-	var center_position: Vector2 = Vector2(get_viewport_rect().end.x, get_viewport_rect().end.y) * 0.5
+	center_position = Vector2(get_viewport_rect().end.x, get_viewport_rect().end.y) * 0.5
 	
 	#Then, it calculates the position of the top left tile
 	var first_tile_position: Vector2 = center_position - Vector2(tile_size * (length - 1) * 0.5, tile_size * (height - 1) * 0.5)
@@ -130,13 +135,6 @@ func positions_dictionary_creator() -> Dictionary[Vector2i, Vector2]:
 		
 	
 	return result
-	
-
-#This function instantiates and adds the Turn Control Node to the board
-func turn_control_initializer() -> void:
-	turn_control = turn_control_scene.instantiate()
-	add_child(turn_control)
-	turn_control.update_turn_ui()
 	
 
 #This function instantiates and adds the Tile Scenes to their respective position
@@ -165,12 +163,15 @@ func board_tile_placer() -> void:
 #TESTING FUNCTION
 #Just like how the test characters are being loaded to this scene, this function is temporary
 func character_tester_placer() -> void:
-	var player_scene = player.instantiate()
+	var player_scene: CharacterClass = player.instantiate()
 	add_child(player_scene)
-	var enemy1_scene = enemy_1.instantiate()
+	player_scene.skill_selected.connect(_on_skill_selected)
+	var enemy1_scene: CharacterClass = enemy_1.instantiate()
 	add_child(enemy1_scene)
-	var enemy2_scene = enemy_2.instantiate()
+	enemy1_scene.skill_selected.connect(_on_skill_selected)
+	var enemy2_scene: CharacterClass = enemy_2.instantiate()
 	add_child(enemy2_scene)
+	enemy2_scene.skill_selected.connect(_on_skill_selected)
 	
 	player_character = player_scene
 	character_list.append(player_scene)
@@ -186,9 +187,11 @@ func character_tester_placer() -> void:
 		character_list[index].level_index = index
 		character_list[index].level_start()
 		
+		var char_size: float = character_list[index].character_sprite.sprite_frames.get_frame_texture("default", 0).get_size().x
+		
 		character_list[index].board_position = rand_position
 		character_list[index].position = positions_dictionary[rand_position]
-		character_list[index].scale *= tile_size/200.0
+		character_list[index].scale *= tile_size/char_size
 	
 
 #This function is what controls the turns and its logic
@@ -207,6 +210,8 @@ func character_turn() -> void:
 		await player_movement_over
 		player_action(current_character)
 		await player_action_over
+		await zooming_out()
+		
 	else:
 		npc_movement(current_character)
 		await npc_movement_over
@@ -235,17 +240,31 @@ func _on_new_turn() -> void:
 
 #This function runs every time a tile is pressed (tile_pressed signal is emitted)
 #It takes the arguments that the signal sends, hence why we store some information in each tile
-func _on_tile_pressed(tile_lp: Vector2i, character_index: int, can_player_move_here: bool) -> void:
+func _on_tile_pressed(tile_lp: Vector2i, character_index: int, can_player_move_here: bool, attack_info: Array[int]) -> void:
 	print(character_index)
 	#Runs this code if the player is set to move
 	if player_to_move:
 		check_player_movement(tile_lp, can_player_move_here)
+		
+	#Runs this part if the player is set to attack
+	elif player_to_attack:
+		if attack_info[2] == -1:
+			print("There's no target here!")
+		else:
+			character_list[attack_info[0]].skills[attack_info[1]].execute_skill(character_list[attack_info[0]], character_list[character_index])
+			await get_tree().create_timer(0.2).timeout
+			target_selected.emit()
+		
 	
 
 #This function starts and sets up the player's movement
 func player_movement(character: CharacterClass) -> void:
 	#First it calculates the movement possibilities for the player
 	character.movement_calculator(tile_dictionary, height, length)
+	
+	#It zooms in on the player's possible movements
+	var zoom: float = (get_viewport_rect().end.y / ((character.move_range * 2) + 2)) / tile_size 
+	zooming_in(character.position, zoom)
 	
 	#Then it sets the possible tiles to be ready for the player's movement
 	for tile_position in character.possible_movements:
@@ -285,12 +304,73 @@ func check_player_movement(tile_position: Vector2i, can_move: bool) -> void:
 	
 
 #This function takes care of the player's action
-#Currently, it does nothing, just emits that the action is over
 func player_action(character: CharacterClass) -> void:
-	print("{0} made an action!".format([character.character_name]))
+	#It creates the buttons for the skills for the player
+	character.skill_button_initializer(height, length, tile_dictionary, character_list)
 	
-	await get_tree().create_timer(randf_range(transition_range[0], transition_range[1])).timeout
+	#It zooms on the player to choose an action
+	var zoom: float = (get_viewport_rect().end.y / 2) / tile_size
+	zooming_in(character.position, zoom)
+	
+	#Then, it waits for the skill to be over to then let the board know that the player's action is over
+	await skill_over
 	player_action_over.emit()
+	
+
+#This function runs everytime a skill is selected
+#It is connected to the CharacterClass signal skill_selected
+#This way, the board gets the info needed from both the buttons and the character
+func _on_skill_selected(chr_index: int, skill_index: int, skill_range: int, skill_target_dictionary: Dictionary[int, Array] = {}) -> void:
+	#Only the button of Skip Turn has an index of -1, so that's what happens when selected
+	#It emits the skill_over signal and ends the player's turn
+	if skill_index == -1:
+		skill_over.emit()
+		print("Skipped a turn!")
+		return
+	
+	#If it's not the Skip Turn button, it'll get the filtered targets and highlight the tiles for the attack
+	#It also stores the attacking character's index, the skill selected and each side of the possible attacks
+	#in the highlighted tiles for easier communication
+	for side in skill_target_dictionary.keys():
+		if skill_target_dictionary[side].size() == 0:
+			continue
+		else:
+			for pos in skill_target_dictionary[side]:
+				tile_dictionary[pos].highlight(tile_dictionary[pos].attack_highlight)
+				tile_dictionary[pos].attack_info[0] = chr_index
+				tile_dictionary[pos].attack_info[1] = skill_index
+				tile_dictionary[pos].attack_info[2] = side
+				
+			
+		
+	
+	#Then, it zooms (out or in) to include the attack range on the screen
+	var zoom: float = (get_viewport_rect().end.y / (3 + skill_range)) / tile_size
+	await zooming_in(camera.offset, zoom)
+	
+	#Makes it possible for the player to attack
+	player_to_attack = true
+	
+	#Then, it waits for a signal sent after the target is selected 
+	await target_selected
+	
+	#And, finally, resets all tiles previously changed and let's the board know that the skill is over
+	player_to_attack = false
+	
+	for side in skill_target_dictionary.keys():
+		if skill_target_dictionary[side].size() == 0:
+			continue
+		else:
+			for pos in skill_target_dictionary[side]:
+				tile_dictionary[pos].un_highlight()
+				tile_dictionary[pos].attack_info[0] = -1
+				tile_dictionary[pos].attack_info[1] = -1
+				tile_dictionary[pos].attack_info[2] = -1
+				
+			
+		
+	
+	skill_over.emit()
 	
 
 #This function takes care of the NPC's movement
@@ -336,6 +416,48 @@ func update_position(character: CharacterClass, current_position: Vector2i, new_
 	character.board_position = new_position
 	tile_dictionary[new_position].occupied = true
 	tile_dictionary[new_position].character_in_tile = character.level_index
+	
+
+func zooming_in(character_position: Vector2, zoom_value: float) -> void:
+	var offset_tween: Tween = create_tween()
+	offset_tween.tween_property(camera, "offset", character_position, 0.1 * zoom_value)
+	offset_tween.set_ease(Tween.EASE_OUT)
+	offset_tween.set_trans(Tween.TRANS_LINEAR)
+	
+	var zoom_tween: Tween = create_tween()
+	zoom_tween.tween_property(camera, "zoom", Vector2(zoom_value, zoom_value), 0.1 * zoom_value)
+	zoom_tween.set_ease(Tween.EASE_OUT)
+	zoom_tween.set_trans(Tween.TRANS_LINEAR)
+	
+	offset_tween.play()
+	zoom_tween.play()
+	
+	await offset_tween.finished
+	await zoom_tween.finished
+	
+	offset_tween.kill()
+	zoom_tween.kill()
+	
+
+func zooming_out() -> void:
+	var zoom_tween: Tween = create_tween()
+	zoom_tween.tween_property(camera, "zoom", Vector2.ONE, 0.1 * camera.zoom.x)
+	zoom_tween.set_ease(Tween.EASE_OUT)
+	zoom_tween.set_trans(Tween.TRANS_LINEAR)
+	
+	var offset_tween: Tween = create_tween()
+	offset_tween.tween_property(camera, "offset", center_position, 0.1 * camera.zoom.x)
+	offset_tween.set_ease(Tween.EASE_OUT)
+	offset_tween.set_trans(Tween.TRANS_LINEAR)
+	
+	zoom_tween.play()
+	offset_tween.play()
+	
+	await zoom_tween.finished 
+	await offset_tween.finished
+	
+	zoom_tween.kill()
+	offset_tween.kill()
 	
 
 #This function runs everytime the npc_action_over signal is emitted

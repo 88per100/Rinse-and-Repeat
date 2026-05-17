@@ -1,7 +1,9 @@
 [gd_scene format=3 uid="uid://bbqrjumu8yvow"]
 
 [ext_resource type="Script" uid="uid://bju1hwqn1d4aw" path="res://Scripts/Node Scripts/character_class.gd" id="1_sxmh3"]
+[ext_resource type="Script" uid="uid://bv8gjji7v61xy" path="res://Scripts/Resource Scripts/skill_resource.gd" id="2_s8gtk"]
 [ext_resource type="Texture2D" uid="uid://d1rtfc117t82u" path="res://Assets/Player.png" id="2_sxmh3"]
+[ext_resource type="Resource" uid="uid://c6mipoevxng4m" path="res://Resources/Skills/test_skill.tres" id="3_ec0ol"]
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_ulu4o"]
 atlas = ExtResource("2_sxmh3")
@@ -24,21 +26,22 @@ character_name = "Tester"
 character_sprite = NodePath("PlayerTestSprite")
 player_character = true
 health_bar = NodePath("PlayerTestHealthBar")
+base_max_health = 10
+base_strength = 2
 base_agility = 2
-move_range = 3
+move_range = 2
 movement_directions = 8
+skills = Array[ExtResource("2_s8gtk")]([ExtResource("3_ec0ol")])
 metadata/_custom_type_script = "uid://bju1hwqn1d4aw"
 
 [node name="PlayerTestSprite" type="AnimatedSprite2D" parent="." unique_id=1928690237]
-position = Vector2(8, -15)
-scale = Vector2(2.5455644, 2.5455644)
 sprite_frames = SubResource("SpriteFrames_6myoh")
 autoplay = "default"
 
 [node name="PlayerTestHealthBar" type="ProgressBar" parent="." unique_id=1352876674]
-offset_left = -93.0
-offset_top = -62.0
-offset_right = -71.0
-offset_bottom = 60.0
+offset_left = -46.0
+offset_top = -25.0
+offset_right = -31.0
+offset_bottom = 36.0
 fill_mode = 3
 show_percentage = false

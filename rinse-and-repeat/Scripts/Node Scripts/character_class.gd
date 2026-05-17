@@ -9,7 +9,6 @@ class_name CharacterClass
 @export var player_character: bool = false
 @export var health_bar: ProgressBar
 @export var health_colors: Array[Color] = [Color(0.0, 0.592, 0.212, 1.0), Color(0.714, 0.4, 0.063, 1.0), Color(0.6, 0.125, 0.141, 1.0)]
-@export var bleed_icon: Sprite2D
 @export_subgroup("Stats")
 @export var base_max_health: int
 @export var base_strength: int
@@ -42,7 +41,14 @@ var current_move_range: int
 var board_position: Vector2i
 var level_index: int
 var possible_movements: Array[Vector2i]
+var skill_target_dictionary: Dictionary[int, Dictionary]
 var skill_button_array: Array[SkillButton]
+
+signal skill_selected(chr_index: int, index: int, skill_range: int, skill_targets: Dictionary[int, Array])
+
+func _ready() -> void:
+	health_bar.z_index = 1
+	
 
 func _process(_delta: float) -> void:
 	update_health_bar_color()
@@ -95,7 +101,7 @@ func take_damage(amount: int) -> void:
 	var possible_health = current_health - amount
 	if possible_health < 0:
 		possible_health = 0
-	update_health(amount)
+	update_health(possible_health)
 	
 
 #This function is responsible for the character healing
@@ -215,13 +221,126 @@ func movement_calculator(tiles: Dictionary[Vector2i, Tile], height: int, length:
 				possible_movements.append(possible_movement)
 	
 
-func skill_button_initializer() -> void:
+#This function instantiates and creates the buttons of the skills on the player
+#As the buttons get created and instantiated, it also calculates each possibility for each skill
+#This makes it so that the game already knows if a skill can be used or not 
+#(in the last case, we disable the button)
+func skill_button_initializer(height: int, length: int, tile_dictionary: Dictionary[Vector2i, Tile], characters: Array[CharacterClass]) -> void:
+	#First, we get the character's sprite size to be able to calculate the button's size
+	var sprite_size: Vector2 = character_sprite.sprite_frames.get_frame_texture("default", 0).get_size()
+	
+	#Then, for each of the character's skills, it creates a button
 	for i in range(skills.size()):
 		var current_button: SkillButton = skill_button_scene.instantiate()
-		skill_button_array[i] = current_button
+		skill_button_array.append(current_button)
 		add_child(current_button)
 		
-		current_button.skill_index = i
-		#Not 100% correct as of now, to change later
-		current_button.set_button_visually(position, character_sprite.sprite_frames.get_frame_texture("default", 0).get_size())
+		current_button.skill_button_pressed.connect(_on_skill_button_pressed)
 		
+		var current_skill: Skill = skills[i]
+		
+		#This part calculates the possible targets of the skill and filters them
+		#The filter obtains the positions where there actually are targets for the skill
+		#At the end, it stores the dictionary of targets for each skill in another dictionary to be accessed later
+		var initial_targets: Dictionary[int, Array] = current_skill.target_type.calculate_targets(board_position, height, length)
+		var current_target_dictionary: Dictionary[int, Array] = skill_target_filter(initial_targets, tile_dictionary, characters, skills[i].target_type.target)
+		skill_target_dictionary[i] = current_target_dictionary
+		
+		#The button is disabled if there are no targets for the skill
+		current_button.button.disabled = !skill_possibility_checker(current_target_dictionary)
+		
+		current_button.skill_index = i
+		current_button.button.text = current_skill.skill_name
+		
+		current_button.set_button_visually(sprite_size)
+		
+	
+	#Seperately from the skills, a button for skipping the turn is created
+	var skip_turn_button: SkillButton = skill_button_scene.instantiate()
+	skill_button_array.append(skip_turn_button)
+	add_child(skip_turn_button)
+	
+	skip_turn_button.skill_button_pressed.connect(_on_skill_button_pressed)
+	
+	skip_turn_button.skill_index = -1
+	skip_turn_button.button.text = "Skip Turn"
+	
+	skip_turn_button.set_button_visually(sprite_size)
+	
+
+#This function runs everytime a skill button is pressed
+func _on_skill_button_pressed(skill_index: int) -> void:
+	#If it's the Skip Turn button, it sends specific information for it
+	#It doesn't send a dictionary with targets, as you can see, but the signal sends that parameter
+	#We fix that in the board_script's function that is connected to this signal
+	#Instead of actually sending that dictionary, since we don't need it, that function has a default value for that parameter 
+	if skill_index == -1:
+		skill_selected.emit(level_index, skill_index, -1)
+	#If it's an actual skill, it sends that info to the board
+	else:
+		skill_selected.emit(level_index, skill_index, skills[skill_index].target_type.skill_range, skill_target_dictionary[skill_index])
+	
+	#Then, it deletes the buttons
+	for button in skill_button_array:
+		button.queue_free()
+		
+	
+	#And clears the Array where the buttons are stored
+	skill_button_array.clear()
+	
+
+#This function filters the possible targets that come from each target type of the skills
+#And it returns the filtered Dictionary as a new Dictionary
+func skill_target_filter(target_dict: Dictionary[int, Array], tile_dict: Dictionary[Vector2i, Tile], characters: Array[CharacterClass], target_type: SkillTarget.target_type) -> Dictionary[int, Array]:
+	var result: Dictionary[int, Array]
+	
+	#Basically, it verifies if there's any valid target in the range in question
+	#And, if so, it adds the whole range to the result
+	for key in target_dict.keys():
+		result[key] = []
+		var are_targets_valid: bool = false
+		
+		for value in target_dict[key]:
+			var tile_info: int = tile_dict[value].character_in_tile
+			if tile_info == -1:
+				continue
+				
+			#If the Skill targets the own character, it skips other verifications
+			elif target_type == SkillTarget.target_type.SELF:
+				are_targets_valid = true
+				
+			else:
+				#This makes it so that the player cannot attack a player character and vice-versa
+				#Because true = 1 and false = 0, the sum of these 2 values is always 1,
+				# which is the condition needed for a valid target
+				var valid_target: int = int(player_character) + int(characters[tile_info].player_character)
+				if valid_target == 1:
+					are_targets_valid = true
+				else:
+					continue
+				
+			
+		if are_targets_valid:
+			result[key].append_array(target_dict[key])
+		else:
+			continue
+		
+	
+	return result
+	
+
+#This function verifies if the skill is possible/ has any valid targets
+#Basically, it just checks the filtered Dictionary and, if all Arrays are empty, it returns false
+#Otherwise, it is possible, so it returns true
+func skill_possibility_checker(filetered_target_dictionary: Dictionary[int, Array]) -> bool:
+	var length_sum: int = 0
+	
+	for index in filetered_target_dictionary.keys():
+		var arr_length: int = filetered_target_dictionary[index].size()
+		length_sum += arr_length
+	
+	if length_sum == 0:
+		return false
+	else:
+		return true
+	

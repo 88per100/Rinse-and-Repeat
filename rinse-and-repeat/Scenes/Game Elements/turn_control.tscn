@@ -7,10 +7,13 @@ font_size = 18
 outline_size = 3
 outline_color = Color(0.8687863, 0, 0.08970068, 1)
 
-[node name="TurnControl" type="Node2D" unique_id=2112414101]
+[node name="TurnControl" type="Control" unique_id=1377041763]
+layout_mode = 3
+anchors_preset = 0
 script = ExtResource("1_txtba")
 
 [node name="TurnPanel" type="Panel" parent="." unique_id=1064915120]
+layout_mode = 0
 offset_left = 6.0
 offset_top = 5.0
 offset_right = 85.0

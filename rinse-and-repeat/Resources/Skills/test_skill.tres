@@ -4,7 +4,7 @@
 [ext_resource type="Script" uid="uid://bp2646gcuy0oo" path="res://Scripts/Resource Scripts/skill_target.gd" id="2_i3l80"]
 [ext_resource type="Script" uid="uid://d1x316fxlvoo4" path="res://Resources/Skill Types/attack.gd" id="3_ek0hg"]
 
-[sub_resource type="Resource" id="Resource_vm34b"]
+[sub_resource type="Resource" id="Resource_ek0hg"]
 script = ExtResource("2_i3l80")
 target = 1
 skill_range = 1
@@ -19,6 +19,6 @@ metadata/_custom_type_script = "uid://d1x316fxlvoo4"
 script = ExtResource("1_wee6o")
 skill_name = "Test Skill"
 type = SubResource("Resource_2qj7x")
-target = SubResource("Resource_vm34b")
+target_type = SubResource("Resource_ek0hg")
 skill_description = "It does damage!"
 metadata/_custom_type_script = "uid://bv8gjji7v61xy"

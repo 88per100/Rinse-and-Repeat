@@ -1,4 +1,4 @@
-extends Node
+extends Control
 class_name TurnControl
 
 @onready var turn_panel: Panel = $TurnPanel

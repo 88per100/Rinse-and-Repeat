@@ -4,18 +4,11 @@ class_name Skill
 
 @export var skill_name: String
 @export var type: SkillType
-@export var target: SkillTarget
+@export var target_type: SkillTarget
 @export var skill_description: String
 
-var player_skill: bool
-var target_dictionary: Dictionary[int, Array]
-
-func verify_user(is_player: bool) -> void:
-	player_skill = is_player
+#This function just runs the skill_effect function from SkillType for easier coding
+func execute_skill(user: CharacterClass, target: CharacterClass) -> void:
+	print("{0} used {1}!".format([user.character_name, skill_name]))
+	type.skill_effect(user, target)
 	
-
-func verify_targets() -> void:
-	pass
-
-func execute_skill(user: CharacterClass, target: Array[Vector2i], tiles: Dictionary[Vector2i, Tile]) -> void:
-	pass

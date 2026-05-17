@@ -2,6 +2,7 @@ extends Node
 class_name DmgCalc
 #This is a helper Script, so this function is accessible to every Script
 #This is because this is a static function
+#Most likely will be changed
 
 static func apply_formula(user_strength: int, user_sharpness: int, target_resistance: int, skill_base_power: int) -> int:
 	var res_part: float = 1 / (4 * (float(target_resistance) + 1))

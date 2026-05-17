@@ -16,13 +16,14 @@ var occupied: bool = false
 var player_can_move_here: bool = false
 var tile_logical_position: Vector2i
 var character_in_tile: int = -1
+var attack_info: Array[int] = [-1, -1, -1]
 
 #This signal is emitted everytime a tile is pressed and it sends info to the board
-signal tile_pressed(logical_position: Vector2i, character: int, movement_possible: bool)
+signal tile_pressed(logical_position: Vector2i, character_list_index: int, movement_possible: bool, attack_side: Array[int])
 
 #This is the function that emits the tile_pressed signal to the board
 func _on_tile_button_pressed() -> void:
-	tile_pressed.emit(tile_logical_position, character_in_tile, player_can_move_here)
+	tile_pressed.emit(tile_logical_position, character_in_tile, player_can_move_here, attack_info)
 	
 
 #This function highlights the tile according to the purpose of the highlight

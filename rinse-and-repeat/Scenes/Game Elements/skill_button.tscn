@@ -3,6 +3,7 @@
 [ext_resource type="Script" uid="uid://yf0mo87vuqqd" path="res://Scripts/Node Scripts/skill_button.gd" id="1_yevxk"]
 
 [node name="SkillButton" type="Control" unique_id=1903472584]
+z_index = 2
 layout_mode = 3
 anchors_preset = 15
 anchor_right = 1.0

@@ -1,12 +1,19 @@
 [gd_scene format=3 uid="uid://dyv08ioydjut1"]
 
 [ext_resource type="Script" uid="uid://vdteit7lkeqh" path="res://Scripts/Node Scripts/board_script.gd" id="1_ok5vv"]
+[ext_resource type="PackedScene" uid="uid://c7aa8xuqmjbrc" path="res://Scenes/Game Elements/turn_control.tscn" id="2_g7di2"]
 
 [node name="BoardScene" type="Node2D" unique_id=1418080976]
 script = ExtResource("1_ok5vv")
 height_min = 4
 height_max = 10
 board_screen_ratio = 0.9
+
+[node name="Camera2D" type="Camera2D" parent="." unique_id=1137275762]
+
+[node name="CanvasLayer" type="CanvasLayer" parent="." unique_id=2110134878]
+
+[node name="TurnControl" parent="CanvasLayer" unique_id=2112414101 instance=ExtResource("2_g7di2")]
 
 [connection signal="new_turn" from="." to="." method="_on_new_turn"]
 [connection signal="npc_action_over" from="." to="." method="_on_npc_action_over"]

@@ -23,6 +23,7 @@ script = ExtResource("1_ktnua")
 character_name = "Enemy2"
 character_sprite = NodePath("AnimatedSprite2D")
 health_bar = NodePath("ProgressBar")
+base_max_health = 10
 move_range = 1
 movement_directions = 8
 metadata/_custom_type_script = "uid://bju1hwqn1d4aw"
