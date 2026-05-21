@@ -1,8 +1,17 @@
+Week #10: (17/05/2026 - 23/05/2026)
+
+ - Create some Tile Art;
+ - Create some Art for the Buttons;
+ - Implement NPC Action with Skills;
+ - Refine NPC Movement;
+ - Start working on Level logic.
+
+-----//-----
+
 Week #9: (10/05/2026 - 16/05/2026)
 
- - Finish implementing Skills;
- - Get much more Art done (temporary at least);
- - Start working on Level logic, if everything else is working.
+ - Finished implementing the Player Action Logic with Skills;
+ - Implemented a Camera.
 
 -----//-----
 

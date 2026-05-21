@@ -1,5 +1,6 @@
 extends Control
 class_name TurnControl
+#This is the Script for the TurnControl Scene
 
 @onready var turn_panel: Panel = $TurnPanel
 @onready var turn_label: Label = $TurnPanel/TurnLabel

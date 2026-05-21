@@ -1,7 +1,12 @@
 extends Node2D
 class_name CharacterClass
+#This is the base script for every character
 
+#The Skill Button Scene gets preloaded to instantiate onto the Character when required
 @onready var skill_button_scene: PackedScene = preload("uid://ckls8i8ojdesf")
+
+#This enum makes it easier and safer to access the Stats
+enum stats {HEALTH, STRENGTH, RESISTANCE, SHARPNESS, AGILITY, MOVE_RANGE}
 
 @export_subgroup("Sprites & U. I.")
 @export var character_name: String
@@ -25,8 +30,6 @@ class_name CharacterClass
 @export_subgroup("Skills")
 @export var skills: Array[Skill]
 
-enum stats {HEALTH, STRENGTH, RESISTANCE, SHARPNESS, AGILITY, MOVE_RANGE}
-
 #These variables store the values in-battle of each stat
 #This will be helpful for buffs, debuffs and health
 var current_health: int
@@ -44,6 +47,7 @@ var possible_movements: Array[Vector2i]
 var skill_target_dictionary: Dictionary[int, Dictionary]
 var skill_button_array: Array[SkillButton]
 
+#This signal is connected to the board and gets sent everytime a skill is selected
 signal skill_selected(chr_index: int, index: int, skill_range: int, skill_targets: Dictionary[int, Array])
 
 func _ready() -> void:
@@ -316,6 +320,7 @@ func skill_target_filter(target_dict: Dictionary[int, Array], tile_dict: Diction
 				var valid_target: int = int(player_character) + int(characters[tile_info].player_character)
 				if valid_target == 1:
 					are_targets_valid = true
+					break
 				else:
 					continue
 				

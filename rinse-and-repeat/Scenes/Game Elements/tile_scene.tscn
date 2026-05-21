@@ -3,14 +3,18 @@
 [ext_resource type="Script" uid="uid://c5kn1fjl8qj7l" path="res://Scripts/Node Scripts/tile_script.gd" id="1_8fn5n"]
 
 [node name="TileScene" type="Node2D" unique_id=1090931250]
-modulate = Color(0.64705884, 0.16470589, 0.16470589, 1)
 script = ExtResource("1_8fn5n")
 
+[node name="TileSprite" type="Sprite2D" parent="." unique_id=1996610027]
+
 [node name="TileButton" type="Button" parent="." unique_id=1588950293]
-modulate = Color(0.64705884, 0.16470589, 0.16470589, 1)
-offset_left = -10.0
-offset_top = -10.0
-offset_right = 10.0
-offset_bottom = 10.0
+modulate = Color(1, 1, 1, 0)
+self_modulate = Color(1, 1, 1, 0)
+offset_left = -16.0
+offset_top = -16.0
+offset_right = 16.0
+offset_bottom = 16.0
+size_flags_horizontal = 4
+size_flags_vertical = 4
 
 [connection signal="pressed" from="TileButton" to="." method="_on_tile_button_pressed"]

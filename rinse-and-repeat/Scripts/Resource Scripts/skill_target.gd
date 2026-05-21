@@ -1,13 +1,14 @@
 extends Resource
 class_name SkillTarget
 #This is a Resource for the Skill that defines the Target of the Skill
-#Still not tested, but done for now
+
+#This enum holds every type or Target for easier and safer access
+enum target_type {SELF, SINGLE_TARGET, AREA, SLICE_AREA}
 
 @export var target: target_type
 @export var skill_range: int
 
-enum target_type {SELF, SINGLE_TARGET, AREA, SLICE_AREA}
-
+#This function calculates every possible position for a Skill depending on the Target Type
 func calculate_targets(user_position: Vector2i, height: int, length: int) -> Dictionary[int, Array]:
 	var target_dictionary: Dictionary[int, Array]
 	
@@ -98,6 +99,7 @@ func calculate_targets(user_position: Vector2i, height: int, length: int) -> Dic
 	return target_dictionary
 	
 
+#This function verifies if a position is or not out of bounds
 func position_in_bounds(pos: Vector2i, h: int, l: int) -> bool:
 	return (pos.x >= 0 and pos.y >= 0 and pos.x < h and pos.y < l)
 	

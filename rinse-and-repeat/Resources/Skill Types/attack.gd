@@ -1,6 +1,7 @@
 extends SkillType
 class_name Attack
-#Resource for a Basic Attack with no side effect
+#Resource for a the Skill Type: Attack 
+#It's a regular Attack with no side effect
 
 @export var base_damage: int
 

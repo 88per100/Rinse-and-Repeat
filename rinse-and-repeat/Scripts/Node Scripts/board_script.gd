@@ -1,10 +1,12 @@
 extends Node2D
 class_name Board
+#This is the Script for the Board Scene
 
-#Tile Scene and Turn Control Scene are preloaded to be instantiated on the board's scene
+#Tile Scene is preloaded to be instantiated on the board's scene
 @onready var tile_scene: PackedScene = preload("uid://biqedlsv4qd0v")
-@onready var turn_control: TurnControl = $CanvasLayer/TurnControl
 
+#These Nodes are already in the Board Scene, these variables hold them for easier access
+@onready var turn_control: TurnControl = $CanvasLayer/TurnControl
 @onready var camera: Camera2D = $Camera2D
 
 #These variables are currently decided on an export to be easier to set and test
@@ -32,7 +34,7 @@ var center_position: Vector2
 
 #Range of time for the transition between turns and actions
 #Probably will be changed or removed later
-var transition_range: Array[float] = [0.5, 1.0]
+var transition_range: Array[float] = [0.5, 0.75]
 
 #Self explanatory, but these store everything related to the positions on the board
 #Logical Board: Stores each Logical Position of the board
@@ -41,16 +43,22 @@ var transition_range: Array[float] = [0.5, 1.0]
 var logical_board: Array[Vector2i]
 var positions_dictionary: Dictionary[Vector2i, Vector2]
 var tile_dictionary: Dictionary[Vector2i, Tile]
+var tile_slices_dictionary: Dictionary[slice_position, Array]
+
+enum slice_position {TOP_LEFT, TOP, TOP_RIGHT, LEFT, MIDDLE, RIGHT, BOTTOM_LEFT, BOTTOM, BOTTOM_RIGHT}
 
 #Variable that stores the Player Character for the board to control
 var player_character: CharacterClass
 
 #Again, self explanatory, but these variables and signals make the turn logic possible
 #player_to_move: Lets the board know if the player is about to move
+#player_to_attack: Lets the board know if the player is about to attack
 #player_movement_over(): Lets the board know when the player's movement is over
 #player_action_over(): Lets the board know when the player's action is over
+#target_selected(): Lets the board know when the character has selected a target
 #npc_movement_over(): Lets the board know when a NPC's movement is over
 #npc_action_over(): Lets the board know when a NPC's action is over
+#skill_over(): Lets the board know when a skill is over
 #new_turn(): Lets the board know when a new turn is set to begin
 var player_to_move: bool = false
 var player_to_attack: bool = false
@@ -68,6 +76,7 @@ func _ready() -> void:
 	logical_board = logical_board_creator()
 	positions_dictionary = positions_dictionary_creator()
 	turn_control.update_turn_ui()
+	tile_sheet_slicer()
 	board_tile_placer()
 	
 	camera.offset = center_position
@@ -78,10 +87,6 @@ func _ready() -> void:
 	
 	new_turn.emit()
 	
-
-# Called every frame. 'delta' is the elapsed time since the previous frame.
-func _process(_delta: float) -> void:
-	pass
 
 #This function sets the actual board dimensions
 #It takes the height range set in the export variables and gets the length from a ratio
@@ -154,10 +159,114 @@ func board_tile_placer() -> void:
 		tile.tile_logical_position = logical_position
 		tile.tile_pressed.connect(_on_tile_pressed)
 		
-		#Finally, it adjusts their position and scale
 		var initial_tile_size: Vector2 = tile.button.size
+		var texture_info: Dictionary[int, Texture2D] = tile_slice_assigner(logical_position)
+		tile.tile_sprite.texture = texture_info.values()[0]
+		
+		if texture_info.keys()[0] == 0:
+			pass
+		elif texture_info.keys()[0] == 1:
+			tile.tile_sprite.flip_h = randi_range(0, 1)
+		elif texture_info.keys()[0] == 2:
+			tile.tile_sprite.flip_v = randi_range(0, 1)
+		else:
+			tile.tile_sprite.flip_h = randi_range(0, 1)
+			tile.tile_sprite.flip_v = randi_range(0, 1)
+		
+		#Finally, it adjusts their position and scale
 		tile.scale *= (tile_size / max(initial_tile_size.x, initial_tile_size.y))
 		tile.position = positions_dictionary[logical_position]
+	
+
+func tile_sheet_slicer() -> void:
+	var sheet_slice: Image = Image.load_from_file("uid://bqqc560hpx7jc")
+	
+	tile_slices_dictionary[slice_position.TOP_LEFT] = []
+	tile_slices_dictionary[slice_position.TOP] = []
+	tile_slices_dictionary[slice_position.TOP_RIGHT] = []
+	tile_slices_dictionary[slice_position.LEFT] = []
+	tile_slices_dictionary[slice_position.MIDDLE] = []
+	tile_slices_dictionary[slice_position.RIGHT] = []
+	tile_slices_dictionary[slice_position.BOTTOM_LEFT] = []
+	tile_slices_dictionary[slice_position.BOTTOM] = []
+	tile_slices_dictionary[slice_position.BOTTOM_RIGHT] = []
+	
+	for i in range(4):
+		for j in range(4):
+			var slice_region: Rect2 = Rect2(j * 32, i * 32, 32, 32)
+			var new_slice: Texture2D = ImageTexture.create_from_image(sheet_slice.get_region(slice_region))
+			
+			if i == 0 and j == 0:
+				tile_slices_dictionary[slice_position.TOP_LEFT].append(new_slice)
+			elif i == 0 and j < 3:
+				tile_slices_dictionary[slice_position.TOP].append(new_slice)
+			elif i == 0 and j == 3:
+				tile_slices_dictionary[slice_position.TOP_RIGHT].append(new_slice)
+			elif i < 3 and j == 0:
+				tile_slices_dictionary[slice_position.LEFT].append(new_slice)
+			elif i < 3 and j < 3:
+				tile_slices_dictionary[slice_position.MIDDLE].append(new_slice)
+			elif i < 3 and j == 3:
+				tile_slices_dictionary[slice_position.RIGHT].append(new_slice)
+			elif i == 3 and j == 0:
+				tile_slices_dictionary[slice_position.BOTTOM_LEFT].append(new_slice)
+			elif i == 3 and j < 3:
+				tile_slices_dictionary[slice_position.BOTTOM].append(new_slice)
+			else:
+				tile_slices_dictionary[slice_position.BOTTOM_RIGHT].append(new_slice)
+			
+	
+
+func tile_slice_assigner(logical_position: Vector2i) -> Dictionary[int, Texture2D]:
+	var i: int = logical_position.x
+	var j: int = logical_position.y
+	
+	var slice_array: Array
+	var side: slice_position
+	
+	if i == 0 and j == 0:
+		slice_array = tile_slices_dictionary[slice_position.TOP_LEFT]
+	elif i == 0 and j < length - 1:
+		slice_array = tile_slices_dictionary[slice_position.TOP]
+		side = slice_position.TOP
+	elif i == 0 and j == length - 1:
+		slice_array = tile_slices_dictionary[slice_position.TOP_RIGHT]
+	elif i < height - 1 and j == 0:
+		slice_array = tile_slices_dictionary[slice_position.LEFT]
+		side = slice_position.LEFT
+	elif i < height - 1 and j < length - 1:
+		slice_array = tile_slices_dictionary[slice_position.MIDDLE]
+	elif i < height - 1 and j == length - 1:
+		slice_array = tile_slices_dictionary[slice_position.RIGHT]
+		side = slice_position.RIGHT
+	elif i == height - 1 and j == 0:
+		slice_array = tile_slices_dictionary[slice_position.BOTTOM_LEFT]
+	elif i == height - 1 and j < length - 1:
+		slice_array = tile_slices_dictionary[slice_position.BOTTOM]
+		side = slice_position.BOTTOM
+	else:
+		slice_array = tile_slices_dictionary[slice_position.BOTTOM_RIGHT]
+	
+	var result: Dictionary[int, Texture2D]
+	
+	if slice_array.size() == 1:
+		result[0] = slice_array[0]
+	elif slice_array.size() == 2:
+		if side == slice_position.TOP or side == slice_position.BOTTOM:
+			var resulting_slice: Texture2D = Texture2D.new()
+			resulting_slice = slice_array[randi_range(0, 1)]
+			result[1] = resulting_slice
+		else:
+			var resulting_slice: Texture2D = Texture2D.new() 
+			resulting_slice = slice_array[randi_range(0, 1)]
+			result[2] = resulting_slice
+		
+	else:
+		var resulting_slice: Texture2D = Texture2D.new() 
+		resulting_slice = slice_array[randi_range(0, 3)]
+		result[3] = resulting_slice
+	
+	return result
 	
 
 #TESTING FUNCTION
@@ -345,7 +454,7 @@ func _on_skill_selected(chr_index: int, skill_index: int, skill_range: int, skil
 		
 	
 	#Then, it zooms (out or in) to include the attack range on the screen
-	var zoom: float = (get_viewport_rect().end.y / (3 + skill_range)) / tile_size
+	var zoom: float = (get_viewport_rect().end.y / (2 + (skill_range * 2))) / tile_size
 	await zooming_in(camera.offset, zoom)
 	
 	#Makes it possible for the player to attack
