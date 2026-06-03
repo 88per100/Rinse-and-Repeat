@@ -302,6 +302,9 @@ func character_tester_placer() -> void:
 		character_list[index].position = positions_dictionary[rand_position]
 		character_list[index].scale *= tile_size/char_size
 	
+	character_list[1].scale *= 0.75
+	character_list[2].scale *= 0.75
+	
 
 #This function is what controls the turns and its logic
 func character_turn() -> void:
@@ -487,9 +490,42 @@ func _on_skill_selected(chr_index: int, skill_index: int, skill_range: int, skil
 #and then emits the npc_movement_over signal
 func npc_movement(character: CharacterClass) -> void:
 	character.movement_calculator(tile_dictionary, height, length)
-	var next_position_index: int = randi_range(0, character.possible_movements.size() - 1)
-	var next_position: Vector2i = character.possible_movements[next_position_index]
-	update_position(character, character.board_position, next_position)
+	
+	var player_positions: Array[Vector2i]
+	
+	for chr in character_list:
+		if chr.player_character:
+			player_positions.append(chr.board_position)
+			
+	
+	var target_position: Vector2i
+	var smallest_distance: float = Vector2i.ZERO.distance_to(Vector2i(height, length))
+	
+	for pos in player_positions:
+		var current_distance: float = character.board_position.distance_to(target_position)
+		if current_distance < smallest_distance:
+			smallest_distance = current_distance
+			target_position = pos
+	
+	var move_distance: float = Vector2i.ZERO.distance_to(Vector2i(height, length))
+	var ideal_position: Vector2i = Vector2i(-1, -1)
+	
+	for possible_move in character.possible_movements:
+		if tile_dictionary[possible_move].occupied:
+			continue
+		else:
+			var next_distance: float = possible_move.distance_to(target_position)
+			if next_distance < move_distance:
+				move_distance = next_distance
+				ideal_position = possible_move
+			
+		
+	
+	if ideal_position == Vector2i(-1, -1):
+		ideal_position = character.board_position
+		
+	
+	update_position(character, character.board_position, ideal_position)
 	character.possible_movements.clear()
 	
 	await get_tree().create_timer(randf_range(transition_range[0], transition_range[1])).timeout
@@ -499,9 +535,36 @@ func npc_movement(character: CharacterClass) -> void:
 #This function takes care of the NPC's action
 #Currently it does nothing other than emitting the npc_action_over signal
 func npc_action(character: CharacterClass) -> void:
-	print("{0} made an action!".format([character.character_name]))
+	var skill_index: int = character.npc_skill_checker(height, length, tile_dictionary, character_list)
+	var zoom: float = (get_viewport_rect().end.y / 2) / tile_size
+	await zooming_in(character.position, zoom)
+	
+	if skill_index == -1:
+		print("{0} skipped its turn!".format([character.character_name]))
+	else:
+		zoom = (get_viewport_rect().end.y / (2 + (character.skills[skill_index].target_type.skill_range * 2))) / tile_size
+		await zooming_in(character.position, zoom)
+		
+		var skill_target_dictionary: Dictionary = character.skill_target_dictionary[skill_index]
+		var targets: Array
+		
+		for side in skill_target_dictionary.values():
+			if side.size() == 0:
+				pass
+			else:
+				targets = side
+				break
+			
+		
+		for pos in targets:
+			if tile_dictionary[pos].character_in_tile == -1:
+				pass
+			else:
+				character.skills[skill_index].execute_skill(character, character_list[tile_dictionary[pos].character_in_tile])
+		
 	
 	await get_tree().create_timer(randf_range(transition_range[0], transition_range[1])).timeout
+	await zooming_out()
 	npc_action_over.emit()
 	
 

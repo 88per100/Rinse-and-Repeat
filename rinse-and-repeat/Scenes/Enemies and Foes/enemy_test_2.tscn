@@ -1,7 +1,9 @@
 [gd_scene format=3 uid="uid://bl8svrbyycwbd"]
 
 [ext_resource type="Script" uid="uid://bju1hwqn1d4aw" path="res://Scripts/Node Scripts/character_class.gd" id="1_ktnua"]
+[ext_resource type="Script" uid="uid://bv8gjji7v61xy" path="res://Scripts/Resource Scripts/skill_resource.gd" id="2_67n1i"]
 [ext_resource type="Texture2D" uid="uid://ccarncl7q183m" path="res://Assets/icon.svg" id="2_rwui8"]
+[ext_resource type="Resource" uid="uid://c6mipoevxng4m" path="res://Resources/Skills/test_skill.tres" id="3_dpfq2"]
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_undhq"]
 atlas = ExtResource("2_rwui8")
@@ -26,6 +28,7 @@ health_bar = NodePath("ProgressBar")
 base_max_health = 10
 move_range = 1
 movement_directions = 8
+skills = Array[ExtResource("2_67n1i")]([ExtResource("3_dpfq2")])
 metadata/_custom_type_script = "uid://bju1hwqn1d4aw"
 
 [node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="." unique_id=463814411]

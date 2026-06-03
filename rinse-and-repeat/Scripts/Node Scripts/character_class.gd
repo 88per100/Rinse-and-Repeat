@@ -66,6 +66,7 @@ func level_start(hp: int = base_max_health) -> void:
 	health_bar.max_value = base_max_health
 	
 	update_health(hp)
+	
 	current_strength = base_strength
 	current_resistance = base_resistance
 	current_sharpness = base_sharpness
@@ -291,6 +292,25 @@ func _on_skill_button_pressed(skill_index: int) -> void:
 	
 	#And clears the Array where the buttons are stored
 	skill_button_array.clear()
+	
+
+func npc_skill_checker(height: int, length: int, tile_dictionary: Dictionary[Vector2i, Tile], characters: Array[CharacterClass]) -> int:
+	var skill_to_use: int = -1
+	
+	for index in range(skills.size()):
+		var current_skill: Skill = skills[index]
+		var initial_targets: Dictionary[int, Array] = current_skill.target_type.calculate_targets(board_position, height, length)
+		var current_target_dictionary: Dictionary[int, Array] = skill_target_filter(initial_targets, tile_dictionary, characters, current_skill.target_type.target)
+		
+		if skill_possibility_checker(current_target_dictionary):
+			skill_target_dictionary[index] = current_target_dictionary
+			skill_to_use = index
+			break
+		else:
+			continue
+			
+	
+	return skill_to_use
 	
 
 #This function filters the possible targets that come from each target type of the skills
